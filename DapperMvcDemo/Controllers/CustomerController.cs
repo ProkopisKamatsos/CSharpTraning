@@ -3,7 +3,7 @@ using System.Data;
 using Dapper;
 using DapperMvcDemo.Models;
 using Microsoft.Data.SqlClient;
-
+using Z.Dapper.Plus;
 
 namespace DapperMvcDemo.Controllers
 {
@@ -153,7 +153,98 @@ namespace DapperMvcDemo.Controllers
         }
 
 
+        public IActionResult BulkInsertDemo()
+        {
+            DapperPlusMapping.EnsureMapped();
 
+            var list = Enumerable.Range(1, 50)
+                .Select(i => new Customer
+                {
+                    FirstName = "FN_" + i,
+                    LastName = "LN_" + i,
+                    Email = $"user{i}@demo.com"
+                })
+                .ToList();
+
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                connection.BulkInsert(list);
+            }
+
+            return RedirectToAction("Index");
+        }
+        public IActionResult BulkUpdateDemo()
+        {
+            DapperPlusMapping.EnsureMapped();
+
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                var customersToUpdate = connection.Query<Customer>(
+                    "SELECT TOP 5 * FROM dbo.Customers ORDER BY CustomerID DESC"
+                ).ToList();
+
+                customersToUpdate.ForEach(c =>
+                    c.Email = "updated_" + c.Email
+                );
+
+                connection.BulkUpdate(customersToUpdate);
+            }
+
+            return RedirectToAction("Index");
+        }
+        // GET: Customer/BulkDeleteDemo
+        public IActionResult BulkDeleteDemo()
+        {
+            DapperPlusMapping.EnsureMapped();
+
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                // Παίρνουμε τους 3 τελευταίους
+                var customersToRemove = connection.Query<Customer>(
+                    "SELECT TOP 3 * FROM dbo.Customers ORDER BY CustomerID DESC"
+                ).ToList();
+
+                connection.BulkDelete(customersToRemove);
+            }
+
+            return RedirectToAction("Index");
+        }
+        // GET: Customer/BulkMergeDemo
+        pudblic IActionResult BulkMergeDemo()
+        {
+            DapperPlusMapping.EnsureMapped();
+
+            using (var connection = new SqlConnection(_configuration.GetConnectionString("DefaultConnection")))
+            {
+                // 1) Παίρνουμε 1 υπάρχοντα (τελευταίο)
+                var existing = connection.Query<Customer>(
+                    "SELECT TOP 1 * FROM dbo.Customers ORDER BY CustomerID DESC"
+                ).SingleOrDefault();
+
+                var list = new List<Customer>();
+
+                // Αν υπάρχει, τον πειράζουμε ώστε να δούμε UPDATE
+                if (existing != null)
+                {
+                    existing.Email = "merged_" + existing.Email;
+                    list.Add(existing);
+                }
+
+                // 2) Φτιάχνουμε 1 καινούργιο (CustomerID=0 -> INSERT)
+                var newOne = new Customer
+                {
+                    FirstName = "Merge",
+                    LastName = "Insert",
+                    Email = "merge_insert@demo.com"
+                };
+                list.Add(newOne);
+
+                // 3) Ένα call που κάνει και UPDATE και INSERT
+                connection.BulkMerge(list);
+            }
+
+            return RedirectToAction("Index");
+        }
 
     }
 }
