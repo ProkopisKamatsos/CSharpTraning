@@ -1,0 +1,78 @@
+﻿using EmployeeManagementSystem.Data;
+using EmployeeManagementSystem.Models;
+
+namespace EmployeeManagementSystem.Services;
+
+public class ProjectService
+{
+    private readonly ProjectRepository _projectRepo;
+
+    public ProjectService(ProjectRepository projectRepo)
+    {
+        _projectRepo = projectRepo;
+    }
+
+    public List<Project> GetAllProjects()
+        => _projectRepo.GetAll();
+
+    public Project? GetProjectById(int id)
+        => _projectRepo.GetById(id);
+
+    public Project CreateProject(Project project)
+    {
+        if (string.IsNullOrWhiteSpace(project.Name))
+            throw new Exception("Project name is required");
+
+        project.Name = project.Name.Trim();
+
+        if (_projectRepo.ExistsByName(project.Name))
+            throw new Exception("Project name already exists");
+
+        if (project.Budget < 0)
+            throw new Exception("Budget cannot be negative");
+
+        // EndDate μπορεί να είναι null. Αν υπάρχει, ας είναι >= StartDate
+        if (project.EndDate.HasValue && project.EndDate.Value.Date < project.StartDate.Date)
+            throw new Exception("EndDate cannot be before StartDate");
+
+        return _projectRepo.Insert(project);
+    }
+
+    public Project UpdateProject(Project project)
+    {
+        if (project.Id <= 0)
+            throw new Exception("Invalid project Id");
+
+        var existing = _projectRepo.GetById(project.Id);
+        if (existing is null)
+            throw new Exception("Project not found");
+
+        if (string.IsNullOrWhiteSpace(project.Name))
+            throw new Exception("Project name is required");
+
+        project.Name = project.Name.Trim();
+
+        if (_projectRepo.ExistsByName(project.Name, project.Id))
+            throw new Exception("Project name already exists");
+
+        if (project.Budget < 0)
+            throw new Exception("Budget cannot be negative");
+
+        if (project.EndDate.HasValue && project.EndDate.Value.Date < project.StartDate.Date)
+            throw new Exception("EndDate cannot be before StartDate");
+
+        return _projectRepo.Update(project);
+    }
+
+    public void DeleteProject(int id)
+    {
+        if (id <= 0)
+            throw new Exception("Invalid project Id");
+
+        var existing = _projectRepo.GetById(id);
+        if (existing is null)
+            throw new Exception("Project not found");
+
+        _projectRepo.Delete(id);
+    }
+}
