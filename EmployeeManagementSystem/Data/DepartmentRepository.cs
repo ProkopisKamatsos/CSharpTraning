@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using EmployeeManagementSystem.Models;
+using System.Data;
 
 namespace EmployeeManagementSystem.Data;
 
@@ -93,5 +94,43 @@ public class DepartmentRepository
         department.Id = id;
         return department;
     }
+    public DepartmentTotals? GetDepartmentTotalsById(int departmentId)
+    {
+        using var conn = _factory.CreateConnection();
+
+        var sql = @"
+        SELECT
+            d.Id AS DepartmentId,
+            d.Name AS DepartmentName,
+
+            COUNT(e.Id) AS TotalEmployeeCount,
+            SUM(CASE WHEN e.IsActive = 1 THEN 1 ELSE 0 END) AS ActiveEmployeeCount,
+            SUM(CASE WHEN e.IsActive = 0 THEN 1 ELSE 0 END) AS InactiveEmployeeCount,
+
+            COALESCE(SUM(CASE WHEN e.IsActive = 1 THEN e.Salary ELSE 0 END), 0) AS ActiveTotalSalary,
+            COALESCE(AVG(CASE WHEN e.IsActive = 1 THEN e.Salary END), 0) AS ActiveAverageSalary
+        FROM Departments d
+        LEFT JOIN Employees e
+            ON e.DepartmentId = d.Id
+        WHERE d.Id = @departmentId
+        GROUP BY d.Id, d.Name;
+    ";
+
+        return conn.QueryFirstOrDefault<DepartmentTotals>(sql, new { departmentId });
+    }
+
+   
+
+public DepartmentTotals? GetDepartmentTotalsById_SP(int departmentId)
+{
+    using var conn = _factory.CreateConnection();
+
+    return conn.QueryFirstOrDefault<DepartmentTotals>(
+        "dbo.sp_DepartmentTotalsById",
+        new { DepartmentId = departmentId },
+        commandType: CommandType.StoredProcedure
+    );
+}
+
 
 }

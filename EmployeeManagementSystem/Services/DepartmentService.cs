@@ -67,4 +67,30 @@ public class DepartmentService
 
         _departmentRepo.Delete(id);
     }
+    public DepartmentTotals GetDepartmentTotalsById(int departmentId)
+    {
+        if (departmentId <= 0)
+            throw new ArgumentException("Invalid department id.");
+
+        var totals = _departmentRepo.GetDepartmentTotalsById(departmentId);
+
+        if (totals == null)
+            throw new Exception("Department not found.");
+
+        return totals;
+    }
+    public DepartmentTotals GetDepartmentTotalsById_StoredProcedure(int departmentId)
+    {
+        if (departmentId <= 0)
+            throw new ArgumentException("Invalid department id.");
+
+        var totals = _departmentRepo.GetDepartmentTotalsById_SP(departmentId);
+
+        if (totals == null)
+            throw new Exception("Department not found.");
+
+        return totals;
+    }
+
+
 }

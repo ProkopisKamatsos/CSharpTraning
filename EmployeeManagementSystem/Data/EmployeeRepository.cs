@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using Dapper;
 using EmployeeManagementSystem.Models;
+using System.Threading.Tasks;
 
 namespace EmployeeManagementSystem.Data;
 
@@ -26,6 +27,21 @@ public class EmployeeRepository
     ";
 
         return conn.QuerySingleOrDefault<Employee>(sql, new { Id = id });
+    }
+
+    public async Task<Employee?> GetByIdAsync(int id)
+    {
+        using var conn = _factory.CreateConnection();
+
+        var sql = @"
+        SELECT 
+            Id, FirstName, LastName, Email, Phone,
+            DepartmentId, Salary, HireDate, IsActive
+        FROM Employees
+        WHERE Id = @Id
+    ";
+
+        return await conn.QuerySingleOrDefaultAsync<Employee>(sql, new { Id = id });
     }
 
 
@@ -237,6 +253,48 @@ public class EmployeeRepository
         );
 
         return dict.Values.SingleOrDefault();
+    }
+    public void UpdateSalaryWithHistory(int employeeId, decimal newSalary)
+    {
+        using var conn = _factory.CreateConnection();
+        conn.Open();
+
+        using var tx = conn.BeginTransaction();
+
+        try
+        {
+            var oldSalary = conn.QueryFirstOrDefault<decimal?>(
+                "SELECT Salary FROM Employees WHERE Id = @Id",
+                new { Id = employeeId },
+                transaction: tx
+            );
+
+            if (oldSalary == null)
+                throw new Exception("Employee not found.");
+
+            var rows = conn.Execute(
+                "UPDATE Employees SET Salary = @Salary WHERE Id = @Id",
+                new { Salary = newSalary, Id = employeeId },
+                transaction: tx
+            );
+
+            if (rows != 1)
+                throw new Exception("Salary update failed.");
+
+            conn.Execute(
+                @"INSERT INTO EmployeeSalaryHistory (EmployeeId, OldSalary, NewSalary)
+              VALUES (@EmployeeId, @OldSalary, @NewSalary)",
+                new { EmployeeId = employeeId, OldSalary = oldSalary.Value, NewSalary = newSalary },
+                transaction: tx
+            );
+
+            tx.Commit();
+        }
+        catch
+        {
+            tx.Rollback();
+            throw;
+        }
     }
 
 

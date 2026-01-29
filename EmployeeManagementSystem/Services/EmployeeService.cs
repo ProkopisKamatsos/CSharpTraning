@@ -42,6 +42,9 @@ public class EmployeeService
         var existing = _employeeRepository.GetById(employee.Id);
         if (existing == null)
             throw new Exception("Employee not found");
+        var activeEmployee = _employeeRepository.GetById(employee.Id);
+        if (activeEmployee != null && !activeEmployee.IsActive)
+            throw new Exception("Cannot update an inactive employee");
 
         if (string.IsNullOrWhiteSpace(employee.FirstName))
             throw new Exception("First name is required");
@@ -104,6 +107,49 @@ public class EmployeeService
 
         return emp;
     }
+    public void UpdateEmployeeSalary(int employeeId, decimal newSalary)
+    {
+        if (employeeId <= 0)
+            throw new ArgumentException("Invalid employee id.");
+
+        if (newSalary < 0)
+            throw new ArgumentException("Salary cannot be negative.");
+
+        _employeeRepository.UpdateSalaryWithHistory(employeeId, newSalary);
+    }
+
+    public async Task<Employee> UpdateEmployeeAsync(Employee employee)
+    {
+        if (employee.Id <= 0)
+            throw new Exception("Invalid employee Id");
+
+        var existing = await _employeeRepository.GetByIdAsync(employee.Id);
+        if (existing == null)
+            throw new Exception("Employee not found");
+
+        if (!existing.IsActive)
+            throw new Exception("Cannot update an inactive employee");
+
+        if (string.IsNullOrWhiteSpace(employee.FirstName))
+            throw new Exception("First name is required");
+
+        if (string.IsNullOrWhiteSpace(employee.LastName))
+            throw new Exception("Last name is required");
+
+        if (string.IsNullOrWhiteSpace(employee.Email) || !employee.Email.Contains("@"))
+            throw new Exception("Invalid email");
+
+        if (employee.Salary < 0)
+            throw new Exception("Salary cannot be negative");
+
+        if (!_departmentRepository.Exists(employee.DepartmentId))
+            throw new Exception("Department does not exist");
+
+        // ΠΡΟΣΟΧΗ: το Update στο repo είναι sync ακόμα
+        // Προσωρινά το αφήνουμε sync μέχρι να κάνουμε και αυτό Async.
+        return _employeeRepository.Update(employee);
+    }
+
 
 
 }

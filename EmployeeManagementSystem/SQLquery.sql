@@ -31,6 +31,15 @@ CREATE TABLE EmployeeProjects (
  FOREIGN KEY (EmployeeId) REFERENCES Employees(Id),
  FOREIGN KEY (ProjectId) REFERENCES Projects(Id)
 );
+CREATE TABLE EmployeeSalaryHistory (
+    Id INT IDENTITY PRIMARY KEY,
+    EmployeeId INT NOT NULL,
+    OldSalary DECIMAL(18,2) NOT NULL,
+    NewSalary DECIMAL(18,2) NOT NULL,
+    ChangedAt DATETIME NOT NULL DEFAULT GETDATE(),
+    FOREIGN KEY (EmployeeId) REFERENCES Employees(Id)
+);
+
 INSERT INTO Employees
 (
     FirstName,
@@ -55,3 +64,27 @@ VALUES
 );
 INSERT INTO Departments (Name, Location, ManagerId)
 VALUES ('IT', 'Athens', NULL);
+
+CREATE OR ALTER PROCEDURE dbo.sp_DepartmentTotalsById
+    @DepartmentId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT
+        d.Id AS DepartmentId,
+        d.Name AS DepartmentName,
+
+        COUNT(e.Id) AS TotalEmployeeCount,
+        SUM(CASE WHEN e.IsActive = 1 THEN 1 ELSE 0 END) AS ActiveEmployeeCount,
+        SUM(CASE WHEN e.IsActive = 0 THEN 1 ELSE 0 END) AS InactiveEmployeeCount,
+
+        COALESCE(SUM(CASE WHEN e.IsActive = 1 THEN e.Salary ELSE 0 END), 0) AS ActiveTotalSalary,
+        COALESCE(AVG(CASE WHEN e.IsActive = 1 THEN e.Salary END), 0) AS ActiveAverageSalary
+    FROM Departments d
+    LEFT JOIN Employees e
+        ON e.DepartmentId = d.Id
+    WHERE d.Id = @DepartmentId
+    GROUP BY d.Id, d.Name;
+END
+GO

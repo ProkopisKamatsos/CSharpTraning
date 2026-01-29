@@ -34,8 +34,11 @@ while (true)
     Console.WriteLine("13. Update project");
     Console.WriteLine("14. Delete project");
     Console.WriteLine("15. Search employee by filters");
+    Console.WriteLine("16. View department totals (report)");
     Console.WriteLine("17. Assign employee to project");
-    Console.WriteLine("18. View employee with projects"); 
+    Console.WriteLine("18. View employee with projects");
+    Console.WriteLine("19. View department totals (Stored Procedure)");
+    Console.WriteLine("20. Update employee salary (Transaction)");
     Console.WriteLine("0. Exit");
 
     Console.Write("Choose: ");
@@ -52,7 +55,7 @@ while (true)
 
                 foreach (var e in employees)
                 {
-                    Console.WriteLine($"{e.Id} - {e.FirstName} {e.LastName} - Department:{e.DepartmentId} - Active: {e.IsActive}");
+                    Console.WriteLine($"{e.Id} - {e.FirstName} {e.LastName} - Department:{e.DepartmentId} - Active: {e.IsActive}-Salary: {e.Salary}");
                 }
 
                 break;
@@ -155,7 +158,8 @@ while (true)
 
                 try
                 {
-                    var updatedEmployee = employeeService.UpdateEmployee(employee);
+                    var updatedEmployee = await employeeService.UpdateEmployeeAsync(employee);
+
                     Console.WriteLine($"Employee updated: {updatedEmployee.Id} - {updatedEmployee.FirstName} {updatedEmployee.LastName}");
                 }
                 catch (Exception ex)
@@ -466,6 +470,38 @@ while (true)
 
                 break;
             }
+        case "16":
+            {
+                Console.Write("Enter department id: ");
+                if (!int.TryParse(Console.ReadLine(), out var deptId))
+                {
+                    Console.WriteLine("Invalid input.");
+                    break;
+                }
+
+                try
+                {
+                    var t = departmentService.GetDepartmentTotalsById(deptId);
+
+                    Console.WriteLine("Department Totals:");
+                    Console.WriteLine($"ID: {t.DepartmentId}");
+                    Console.WriteLine($"Name: {t.DepartmentName}");
+                    Console.WriteLine($"Total Employees: {t.TotalEmployeeCount}");
+                    Console.WriteLine($"Active Employees: {t.ActiveEmployeeCount}");
+                    Console.WriteLine($"Inactive Employees: {t.InactiveEmployeeCount}");
+                    Console.WriteLine($"Active Total Salary: {t.ActiveTotalSalary:N2}");
+                    Console.WriteLine($"Active Avg Salary: {t.ActiveAverageSalary:N2}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
+
+                break;
+            }
+
+
+
         case "17":
             {
                 Console.Write("Employee Id: ");
@@ -515,6 +551,65 @@ while (true)
 
                 break;
             }
+        case "19":
+            {
+                Console.Write("Enter department id: ");
+                if (!int.TryParse(Console.ReadLine(), out var deptId))
+                {
+                    Console.WriteLine("Invalid input.");
+                    break;
+                }
+
+                try
+                {
+                    var t = departmentService.GetDepartmentTotalsById_StoredProcedure(deptId);
+
+                    Console.WriteLine("Department Totals (Stored Procedure):");
+                    Console.WriteLine($"ID: {t.DepartmentId}");
+                    Console.WriteLine($"Name: {t.DepartmentName}");
+                    Console.WriteLine($"Total Employees: {t.TotalEmployeeCount}");
+                    Console.WriteLine($"Active Employees: {t.ActiveEmployeeCount}");
+                    Console.WriteLine($"Inactive Employees: {t.InactiveEmployeeCount}");
+                    Console.WriteLine($"Active Total Salary: {t.ActiveTotalSalary:N2}");
+                    Console.WriteLine($"Active Avg Salary: {t.ActiveAverageSalary:N2}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
+
+                break;
+            }
+        case "20":
+            {
+                Console.Write("Enter employee id: ");
+                if (!int.TryParse(Console.ReadLine(), out var empId))
+                {
+                    Console.WriteLine("Invalid employee id.");
+                    break;
+                }
+
+                Console.Write("Enter new salary: ");
+                if (!decimal.TryParse(Console.ReadLine(), out var newSalary))
+                {
+                    Console.WriteLine("Invalid salary.");
+                    break;
+                }
+
+                try
+                {
+                    employeeService.UpdateEmployeeSalary(empId, newSalary);
+                    Console.WriteLine("Salary updated successfully (transaction committed).");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message} (transaction rolled back).");
+                }
+
+                break;
+            }
+
+
 
 
 
@@ -522,5 +617,6 @@ while (true)
             Console.WriteLine("Invalid option");
             break;
     }
+
 
 }
