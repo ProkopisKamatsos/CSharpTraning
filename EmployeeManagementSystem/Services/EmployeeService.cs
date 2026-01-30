@@ -197,6 +197,30 @@ public class EmployeeService
         await _employeeRepository.UpdateSalaryWithHistoryAsync(employeeId, newSalary);
     }
 
+    public async Task BulkImportEmployeesAsync(List<Employee> employees)
+    {
+        if (employees == null || employees.Count == 0)
+            throw new Exception("No employees to import.");
+
+       
+        foreach (var e in employees)
+        {
+            if (string.IsNullOrWhiteSpace(e.FirstName))
+                throw new Exception("First name is required.");
+
+            if (string.IsNullOrWhiteSpace(e.LastName))
+                throw new Exception("Last name is required.");
+
+            if (string.IsNullOrWhiteSpace(e.Email) || !e.Email.Contains("@"))
+                throw new Exception("Invalid email.");
+
+            if (e.Salary < 0)
+                throw new Exception("Salary cannot be negative.");
+
+        }
+
+        await _employeeRepository.BulkInsertAsync(employees);
+    }
 
 
 

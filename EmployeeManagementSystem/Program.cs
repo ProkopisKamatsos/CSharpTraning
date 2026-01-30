@@ -1,6 +1,13 @@
 ﻿using EmployeeManagementSystem.Data;
 using EmployeeManagementSystem.Models;
 using EmployeeManagementSystem.Services;
+using Z.Dapper.Plus;
+using Microsoft.Data.SqlClient;
+
+DapperPlusManager.Entity<Employee>()
+    .Table("Employees")
+    .Identity(x => x.Id); 
+
 
 var cs = "Server=localhost\\SQLEXPRESS;Database=CompanyDB;Trusted_Connection=True;TrustServerCertificate=True;";
 
@@ -39,6 +46,7 @@ while (true)
     Console.WriteLine("18. View employee with projects");
     Console.WriteLine("19. View department totals (Stored Procedure)");
     Console.WriteLine("20. Update employee salary (Transaction)");
+    Console.WriteLine("21. Bulk import demo employees (Dapper Plus)");
     Console.WriteLine("0. Exit");
 
     Console.Write("Choose: ");
@@ -609,6 +617,51 @@ while (true)
 
                 break;
             }
+        case "21":
+            {
+                Console.Write("How many employees to import? ");
+                if (!int.TryParse(Console.ReadLine(), out var n) || n <= 0)
+                {
+                    Console.WriteLine("Invalid number.");
+                    break;
+                }
+
+                Console.Write("Department Id for all (e.g. 1): ");
+                if (!int.TryParse(Console.ReadLine(), out var deptId) || deptId <= 0)
+                {
+                    Console.WriteLine("Invalid department id.");
+                    break;
+                }
+
+                var employees = new List<Employee>();
+                for (int i = 0; i < n; i++)
+                {
+                    employees.Add(new Employee
+                    {
+                        FirstName = "Demo",
+                        LastName = $"User{i + 1}",
+                        Email = $"demo.user{i + 1}@example.com",
+                        Phone = null,
+                        DepartmentId = deptId,
+                        Salary = 1000 + i,
+                        HireDate = DateTime.Now,
+                        IsActive = true
+                    });
+                }
+
+                try
+                {
+                    await employeeService.BulkImportEmployeesAsync(employees);
+                    Console.WriteLine($"Bulk import completed: {n} employees inserted.");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
+
+                break;
+            }
+
         default:
             Console.WriteLine("Invalid option");
             break;

@@ -2,6 +2,8 @@
 using Dapper;
 using EmployeeManagementSystem.Models;
 using System.Threading.Tasks;
+using Z.Dapper.Plus;
+using Microsoft.Data.SqlClient;
 
 namespace EmployeeManagementSystem.Data;
 
@@ -476,6 +478,17 @@ public class EmployeeRepository
             tx.Rollback();
             throw;
         }
+    }
+    public async Task BulkInsertAsync(List<Employee> employees)
+    {
+        if (employees == null || employees.Count == 0)
+            return;
+
+        using var conn = _factory.CreateConnection();
+        conn.Open();
+
+       
+        conn.BulkInsert(employees);
     }
 
 
