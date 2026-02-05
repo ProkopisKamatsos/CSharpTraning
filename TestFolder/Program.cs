@@ -1,38 +1,43 @@
-﻿public delegate int CompareCustomers(Customer c1, Customer c2);
-public class TestClass
+﻿public class OrderEventArgs : EventArgs
 {
-    static void Main()
+    public int OrderId { get; set; }
+    public DateTime OrderDate { get; set; }
+}
+
+public class OrderProcessor
+{
+    // Using EventHandler<T> to define an event with custom event data
+    // Nullable to indicate no subscribers initially
+    public event EventHandler<OrderEventArgs>? OrderProcessed;
+
+    protected virtual void OnOrderProcessed(OrderEventArgs e)
     {
-        Random random = new Random();
-        List<Customer> customers = new List<Customer>();
+        OrderProcessed?.Invoke(this, e);
+    }
 
-        // Create 10 customers with random ages and IDs
-        for (int i = 0; i < 10; i++)
+    public void ProcessOrder(int orderId)
+    {
+        Console.WriteLine($"Processing order {orderId}...");
+        OnOrderProcessed(new OrderEventArgs
         {
-            string customerId = random.Next(10000000, 99999999).ToString();
-            int age = random.Next(30, 51); // Random age between 30 and 50
-            customers.Add(new Customer(customerId, age));
-        }
-
-        // Define the CompareCustomers delegate
-        CompareCustomers compare = (c1, c2) => c2.Age.CompareTo(c1.Age);
-        customers.Sort((c1, c2) => compare(c1, c2));
-
-        // Print sorted customers
-        foreach (var customer in customers)
-        {
-            Console.WriteLine($"ID: {customer.CustomerId}, Age: {customer.Age}");
-        }
+            OrderId = orderId,
+            OrderDate = DateTime.Now
+        });
     }
 }
-public class Customer
-{
-    public string CustomerId { get; set; }
-    public int Age { get; set; }
 
-    public Customer(string custId, int age)
+// Subscribing to the event
+public class Program
+{
+    public static void Main()
     {
-        CustomerId = custId;
-        Age = age;
+        OrderProcessor processor = new OrderProcessor();
+        processor.OrderProcessed += (sender, e) =>
+        {
+            Console.WriteLine($"Order {e.OrderId} processed on {e.OrderDate}");
+        };
+
+        processor.ProcessOrder(123); // Output: "Processing order 123..."
+                                     // Output: "Order 123 processed on [current date and time]"
     }
 }
