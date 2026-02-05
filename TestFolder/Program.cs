@@ -1,43 +1,35 @@
-﻿public class OrderEventArgs : EventArgs
+﻿using System;
+using System.Collections;
+
+namespace GenericsBasics
 {
-    public int OrderId { get; set; }
-    public DateTime OrderDate { get; set; }
-}
-
-public class OrderProcessor
-{
-    // Using EventHandler<T> to define an event with custom event data
-    // Nullable to indicate no subscribers initially
-    public event EventHandler<OrderEventArgs>? OrderProcessed;
-
-    protected virtual void OnOrderProcessed(OrderEventArgs e)
+    class Program
     {
-        OrderProcessed?.Invoke(this, e);
-    }
-
-    public void ProcessOrder(int orderId)
-    {
-        Console.WriteLine($"Processing order {orderId}...");
-        OnOrderProcessed(new OrderEventArgs
+        static void Main(string[] args)
         {
-            OrderId = orderId,
-            OrderDate = DateTime.Now
-        });
-    }
-}
+            Salaries salaries = new Salaries();
+            ArrayList salaryList = salaries.GetSalaries();
+            float salary = (float)salaryList[1];
+            salary = salary +(salary * 0.2f);
+                Console.WriteLine("The salary with 20% increase is: " + salary);
 
-// Subscribing to the event
-public class Program
-{
-    public static void Main()
-    {
-        OrderProcessor processor = new OrderProcessor();
-        processor.OrderProcessed += (sender, e) =>
+
+        }
+
+        public class Salaries
         {
-            Console.WriteLine($"Order {e.OrderId} processed on {e.OrderDate}");
-        };
+            ArrayList _salaryList = new ArrayList();
+            public Salaries()
+            {
+                _salaryList.Add(60000.34);
+                _salaryList.Add(40000.51f);
+                _salaryList.Add(20000.23f);
+            }
+            public ArrayList GetSalaries()
+            {
+                return _salaryList;
 
-        processor.ProcessOrder(123); // Output: "Processing order 123..."
-                                     // Output: "Order 123 processed on [current date and time]"
+            }
+        }
     }
 }
