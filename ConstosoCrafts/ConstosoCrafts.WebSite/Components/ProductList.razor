@@ -101,16 +101,8 @@
         {
             voteCount = selectedProduct.Ratings.Count();
             voteLabel = voteCount > 1 ? "Votes" : "Vote";
-            try
-            {
-                    currentRating = (int)(selectedProduct.Ratings.Sum() / voteCount);
-             
-            }
-            catch (OverflowException)
-            {
-                currentRating = 0;
-            }
-            throw new System.Exception("This is an exception to demonstrate error handling in Blazor components.");
+           
+            currentRating = selectedProduct.Ratings.Sum() / voteCount;
         }
 
         System.Console.WriteLine($"Current rating for {selectedProduct?.Id}: {currentRating}");
