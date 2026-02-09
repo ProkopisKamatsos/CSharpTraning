@@ -1,4 +1,4 @@
-using ConstosoCrafts.WebSite;
+using ContosoCrafts.WebSite;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
