@@ -1,4 +1,4 @@
-# Task Management REST API (Major Practice Project)
+# Task Management REST API 
 
 ## 📌 Overview
 
@@ -54,6 +54,37 @@ The main goals of this project are to:
 
 ---
 
+
 ## 📂 Project Structure
+
+- **Models** – Entity definitions
+- **Data** – Database connection factory
+- **Repositories** – Data access logic
+- **Services** – Business logic
+- **Program.cs** – Application entry point
+- **SQLquery_TaskManagementAPI.sql** – Database schema and queries
+
+---
+
+## ⚙️ Features
+- **👤 Users** –
+Register new users
+Login validation
+Get user profile
+Update user profile
+Deactivate users
+- **✅ Tasks** –
+Create, read, update, and delete tasks
+Assign tasks to users
+Filter tasks by user
+Filter tasks by status
+Search tasks by keyword
+Task status and priority management
+- **🗂 Categories** –
+Create, read, update, and delete categories
+- **💬 Comments** –
+Add comments to tasks
+View comments per task
+Delete comments
 
 
