@@ -48,7 +48,7 @@ Some of the key topics explored in this repository include:
 - **ASP.NET Core**
 - **Blazor**
 - **ADO.NET & Dapper**
-- **SQL / T-SQL**
+- **SQL/T-SQL/LINQ**
 - **HTML & CSS**
 
 ---
