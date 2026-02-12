@@ -45,10 +45,10 @@ Some of the key topics explored in this repository include:
 
 - **C#**
 - **.NET / .NET Core**
-- **ASP.NET Core**
+- **ASP.NET Core/Web API**
 - **Blazor**
 - **ADO.NET & Dapper**
-- **SQL / T-SQL**
+- **SQL/T-SQL/LINQ**
 - **HTML & CSS**
 
 ---
