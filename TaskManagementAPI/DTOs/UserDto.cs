@@ -14,7 +14,7 @@ public class UserDto
     [EmailAddress]
     public string Email { get; set; } = null!;
 
-    // Για REGISTER / LOGIN input
+   
     [Required]
     [MinLength(6)]
     public string Password { get; set; } = null!;
