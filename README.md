@@ -1,4 +1,4 @@
-# CSharp Training Repository
+# 🚀 C# Training Repository
 
 ## 📚 About This Repository
 
@@ -8,7 +8,19 @@ It contains a collection of exercises, small projects, and practice applications
 
 The purpose of this repository is to **learn by doing**, improve my problem-solving skills, and gradually build a strong foundation for real-world software development.
 
-Major Pojects: [DapperMvcDemo]([url](https://github.com/ProkopisKamatsos/TrainingCSharp-.NET-Dapper/tree/main/DapperMvcDemo))
+---
+
+## 🧩 Major Projects
+
+- 🔹 **[DapperMvcDemo](https://github.com/ProkopisKamatsos/TrainingCSharp-.NET-Dapper/tree/main/DapperMvcDemo)**  
+  ASP.NET MVC application using Dapper for data access.
+
+- 🔹 **[EmployeeManagementSystem – Console App](https://github.com/ProkopisKamatsos/TrainingCSharp-.NET-Dapper/tree/main/EmployeeManagementSystem-C%23-.NET-ConsoleApp)**  
+  Console-based employee management system built with C# and .NET.
+
+- 🔹 **[TaskManagementAPI](https://github.com/ProkopisKamatsos/TrainingCSharp-.NET-Dapper/tree/main/TaskManagementAPI)**  
+  RESTful Web API for managing tasks using ASP.NET Core.
+
 ---
 
 ## 🎯 Learning Objectives
@@ -16,29 +28,27 @@ Major Pojects: [DapperMvcDemo]([url](https://github.com/ProkopisKamatsos/Trainin
 Through this repository, I aim to:
 
 - Build a solid understanding of **C# fundamentals**
-- Practice **object-oriented programming (OOP)** concepts
+- Practice **object-oriented programming (OOP)**
 - Learn how to structure and organize code properly
 - Work with **databases and data access**
 - Understand **asynchronous programming**
-- Create simple **console apps, APIs, and web applications**
+- Create **console apps, APIs, and web applications**
 - Track my progress as I grow as a developer
 
 ---
 
 ## 🧠 Topics & Concepts Covered
 
-Some of the key topics explored in this repository include:
-
 - Variables, conditions, loops
-- Classes, interfaces, inheritance, and abstraction
+- Classes, interfaces, inheritance, abstraction
 - Collections and LINQ
 - Date and time operations
-- File handling and JSON serialization
-- Asynchronous programming (`async` / `await`, `Task`)
+- File handling & JSON serialization
+- Asynchronous programming (`async` / `await`)
 - Basic CRUD operations
 - ASP.NET Core Web APIs
 - Blazor fundamentals
-- Simple frontend integration (HTML & CSS)
+- Basic frontend integration (HTML & CSS)
 
 ---
 
@@ -46,12 +56,12 @@ Some of the key topics explored in this repository include:
 
 - **C#**
 - **.NET / .NET Core**
-- **ASP.NET Core/Web API**
+- **ASP.NET Core / Web API**
 - **Blazor**
 - **ADO.NET & Dapper**
-- **SQL/T-SQL/LINQ**
+- **SQL / T-SQL / LINQ**
 - **HTML & CSS**
 
 ---
 
-
+📌 *This repository is continuously updated as I learn and experiment with new concepts.*
