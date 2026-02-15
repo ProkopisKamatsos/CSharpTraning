@@ -7,6 +7,7 @@ This repository represents my **personal learning journey in C# and .NET**.
 It contains a collection of exercises, small projects, and practice applications that I created while studying and experimenting with different concepts of the C# programming language and the .NET ecosystem.
 
 The purpose of this repository is to **learn by doing**, improve my problem-solving skills, and gradually build a strong foundation for real-world software development.
+
 Major Pojects: [DapperMvcDemo]([url](https://github.com/ProkopisKamatsos/TrainingCSharp-.NET-Dapper/tree/main/DapperMvcDemo))
 ---
 
